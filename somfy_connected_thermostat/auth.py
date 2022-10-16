@@ -33,7 +33,7 @@ class SomfyConnectedThermostatOAuth:
         if response.status != 200:
             raise SomfyConnectedThermostatOauthError(response.status)
         tokens = await response.json()
-        __update_expires_at(tokens)
+        update_expires_at(tokens)
         return tokens
 
     async def refresh_tokens(self, tokens):
@@ -53,14 +53,14 @@ class SomfyConnectedThermostatOAuth:
         if response.status != 200:
             return None
         tokens = await response.json()
-        __update_expires_at(tokens)
+        update_expires_at(tokens)
 
         return tokens
 
 class SomfyConnectedThermostatOauthError(Exception):
     """SomfyConnectedThermostatOauthError."""
 
-def __update_expires_at(tokens):
+def update_expires_at(tokens):
   tokens['expires_at'] = int(time()) + tokens['expires_in']
 
 def is_token_expired(tokens):

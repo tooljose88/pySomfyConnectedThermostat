@@ -1,7 +1,7 @@
 
 """Library to handle connection with SomfyConnectedThermostat API."""
 from aiohttp import ClientSession
-from somfy_connected_thermostat.auth import SomfyConnectedThermostatOAuth, SomfyConnectedThermostatOauthError, __is_token_expired
+from somfy_connected_thermostat.auth import SomfyConnectedThermostatOAuth, SomfyConnectedThermostatOauthError, is_token_expired
 
 from somfy_connected_thermostat.models import Principal, Smartphone, Thermostat, ThermostatCommand, ThermostatInfo
 
@@ -80,9 +80,17 @@ class SomfyConnectedThermostatApi:
         res = await self.websession.get(url, headers=headers)
         data = await res.json()
 
+        temperature_consigne = data.get('temperature_consigne')
+        derogation = data.get('latest_derogation')
+
+        if derogation:
+          temperature_override = derogation.get('temperature')
+          if temperature_override:
+            temperature_consigne = temperature_override
+
         return ThermostatInfo(
           data.get('temperature'),
-          data.get('temperature_consigne'),
+          temperature_consigne,
           data.get('battery'),
           data.get('mode')
         )
@@ -101,7 +109,7 @@ class SomfyConnectedThermostatApi:
             raise SomfyConnectedSendCommandError(res.status)
 
     async def __get_access_token(self):
-        if not __is_token_expired(self.tokens):
+        if not is_token_expired(self.tokens):
             return self.tokens.get('access_token')
 
         try:
