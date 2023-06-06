@@ -35,7 +35,7 @@ class ThermostatInfo:
 
 class ThermostatCommand:
   def __init__(self, heating_mode: Heating_mode, derogation_type: str, duration: int,finish_at: int, target_temperature: float):
-    self.heating_mode = heating_mode if target_temperature > 14 else Heating_mode.FREEZE
+    self.heating_mode = heating_mode.value if target_temperature > 14 else Heating_mode.FREEZE.value
     self.derogation_type = derogation_type
     self.duration = duration
     self.started_at = round(time())
