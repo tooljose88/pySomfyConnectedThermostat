@@ -19,7 +19,7 @@ class Smartphone:
     self.vendor_id = vendor_id
     self.push_token = push_token
 
-class Heating_mode(Enum):
+class HeatingMode(Enum):
     MANUAL = 'manuel'
     FREEZE = 'freeze'
     AWAY = 'away'
@@ -34,8 +34,11 @@ class ThermostatInfo:
     self.mode = mode
 
 class ThermostatCommand:
-  def __init__(self, heating_mode: Heating_mode, derogation_type: str, duration: int,finish_at: int, target_temperature: float):
-    self.heating_mode = heating_mode.value if target_temperature > 14 else Heating_mode.FREEZE.value
+  def __init__(self, heating_mode: HeatingMode, derogation_type: str, duration: int,finish_at: int, target_temperature: float):
+    if target_temperature < 14:
+      heating_mode = HeatingMode.FREEZE
+      target_temperature = 8.0
+    self.heating_mode = heating_mode.value
     self.derogation_type = derogation_type
     self.duration = duration
     self.started_at = round(time())
@@ -43,7 +46,7 @@ class ThermostatCommand:
     self.target_temperature = target_temperature
 
 class SetTemperatureCommand:
-  def __init__(self, target_temperature: float, derogation_type: str = 'further_notice', heating_mode = Heating_mode.MANUAL):
+  def __init__(self, target_temperature: float, derogation_type: str = 'further_notice', heating_mode = HeatingMode.MANUAL):
     ThermostatCommand.__init__(
       self,
       heating_mode= heating_mode,
@@ -54,7 +57,7 @@ class SetTemperatureCommand:
     )
 
 class SetTemperatureWithDurationCommand:
-  def __init__(self, target_temperature: float, duration: int, heating_mode = Heating_mode.MANUAL):
+  def __init__(self, target_temperature: float, duration: int, heating_mode = HeatingMode.MANUAL):
     ThermostatCommand.__init__(
       self,
       heating_mode= heating_mode,

@@ -8,7 +8,7 @@ setup(
     name = 'pySomfyConnectedThermostat',
     packages = ['somfy_connected_thermostat'],
     install_requires=['aiohttp>=3.8.3'],
-    version='0.0.4',
+    version='0.0.5',
     description='A python3 library to communicate with Somfy connected thermostat',
     long_description=long_description,
     python_requires='>=3.5.3',
